@@ -9,19 +9,22 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
-    --dark: #0e0e10;
-    --surface: #18181c;
-    --surface2: #222228;
-    --border: rgba(201,168,76,0.18);
-    --text: #f0ece4;
-    --muted: #888;
+    --gold: #b07d2e;
+    --gold-light: #d4a843;
+    --gold-pale: #f5e6c3;
+    --bg: #f4f0ea;
+    --surface: #ffffff;
+    --surface2: #faf7f3;
+    --border: rgba(176,125,46,0.18);
+    --border-soft: rgba(0,0,0,0.07);
+    --text: #1a1612;
+    --muted: #9a8a78;
+    --accent-bg: rgba(176,125,46,0.07);
   }
 
   body {
     font-family: 'DM Sans', sans-serif;
-    background: var(--dark);
+    background: var(--bg);
     min-height: 100vh;
     display: flex;
     align-items: center;
@@ -29,163 +32,166 @@
     overflow: hidden;
   }
 
-  /* Ambient background */
   body::before {
     content: '';
     position: fixed;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
+    width: 700px; height: 700px;
+    background: radial-gradient(circle at 40% 40%, rgba(212,168,67,0.12) 0%, transparent 65%),
+                radial-gradient(circle at 70% 70%, rgba(176,125,46,0.08) 0%, transparent 55%);
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
-  }
-
-  /* Noise texture overlay */
-  body::after {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    opacity: 0.4;
   }
 
   .card {
     position: relative;
     width: 360px;
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 40px 36px 36px;
+    border: 1px solid rgba(176,125,46,0.15);
+    border-radius: 28px;
+    padding: 40px 34px 34px;
     text-align: center;
     box-shadow:
-      0 0 0 1px rgba(201,168,76,0.06),
-      0 30px 80px rgba(0,0,0,0.6),
-      0 0 60px rgba(201,168,76,0.04);
-    animation: cardIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+      0 1px 0 rgba(255,255,255,0.9) inset,
+      0 20px 60px rgba(176,125,46,0.12),
+      0 4px 20px rgba(0,0,0,0.06);
+    animation: cardIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
   @keyframes cardIn {
-    from { opacity: 0; transform: translateY(32px) scale(0.97); }
+    from { opacity: 0; transform: translateY(24px) scale(0.97); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
-  /* Top decorative line */
   .card::before {
     content: '';
     position: absolute;
     top: 0; left: 50%;
     transform: translateX(-50%);
-    width: 80px; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    border-radius: 0 0 2px 2px;
+    width: 72px; height: 2.5px;
+    background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+    border-radius: 0 0 3px 3px;
   }
 
-  /* NFC icon top right */
   .nfc-badge {
     position: absolute;
-    top: 18px; right: 22px;
-    opacity: 0.35;
-    animation: pulse 3s ease-in-out infinite;
+    top: 16px; right: 20px;
+    opacity: 0.4;
+    animation: breathe 3s ease-in-out infinite;
   }
-  @keyframes pulse {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 0.6; }
+  @keyframes breathe {
+    0%,100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.05); }
   }
-  .nfc-badge svg { width: 22px; height: 22px; fill: var(--gold); }
+  .nfc-badge svg { width: 20px; height: 20px; fill: var(--gold); }
 
-  /* Avatar */
   .avatar-wrapper {
     position: relative;
     display: inline-block;
-    margin-bottom: 20px;
-    animation: fadeUp 0.8s 0.15s cubic-bezier(0.16,1,0.3,1) both;
+    margin-bottom: 18px;
+    animation: fadeUp 0.7s 0.12s cubic-bezier(0.16,1,0.3,1) both;
   }
   .avatar-ring {
-    position: absolute; inset: -5px;
+    position: absolute; inset: -4px;
     border-radius: 50%;
-    border: 1px solid transparent;
-    background: linear-gradient(135deg, var(--gold), transparent, var(--gold-light)) border-box;
-    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: destination-out;
-    mask-composite: exclude;
+    background: conic-gradient(var(--gold-light), var(--gold-pale), var(--gold-light), var(--gold-pale), var(--gold-light));
+    opacity: 0.65;
+    z-index: 0;
+    animation: spinRing 8s linear infinite;
   }
-  .avatar-wrapper img {
+  @keyframes spinRing { to { transform: rotate(360deg); } }
+  .avatar-inner {
+    position: relative;
     width: 100px; height: 100px;
     border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid white;
+    z-index: 1;
+  }
+  .avatar-inner img {
+    width: 100%; height: 100%;
     object-fit: cover;
     display: block;
-    filter: grayscale(10%);
   }
 
-  /* Name & title */
   .name {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 32px;
-    font-weight: 300;
-    letter-spacing: 0.04em;
-    color: var(--text);
-    line-height: 1;
-    margin-bottom: 6px;
-    animation: fadeUp 0.8s 0.2s cubic-bezier(0.16,1,0.3,1) both;
-  }
-  .title {
-    font-size: 11px;
+    font-size: 30px;
     font-weight: 400;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.03em;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 6px;
+    animation: fadeUp 0.7s 0.18s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .title-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-bg);
+    border: 1px solid var(--border);
+    padding: 4px 13px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.7s 0.22s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .title-badge span {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
     color: var(--gold);
-    margin-bottom: 28px;
-    animation: fadeUp 0.8s 0.25s cubic-bezier(0.16,1,0.3,1) both;
   }
 
-  /* Divider */
   .divider {
     width: 100%; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border), transparent);
-    margin-bottom: 24px;
-    animation: fadeUp 0.8s 0.3s both;
+    background: linear-gradient(90deg, transparent, rgba(176,125,46,0.2), transparent);
+    margin-bottom: 18px;
+    animation: fadeUp 0.7s 0.26s both;
   }
 
-  /* Contact rows */
   .contact-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-bottom: 28px;
+    gap: 9px;
+    margin-bottom: 10px;
     text-align: left;
   }
+
   .contact-item {
     display: flex;
     align-items: center;
-    gap: 14px;
-    padding: 12px 16px;
+    gap: 12px;
+    padding: 11px 13px;
     background: var(--surface2);
-    border: 1px solid rgba(255,255,255,0.04);
-    border-radius: 12px;
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
     text-decoration: none;
-    transition: border-color 0.2s, background 0.2s;
-    animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
+    transition: all 0.2s;
+    animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) both;
   }
-  .contact-item:nth-child(1) { animation-delay: 0.35s; }
-  .contact-item:nth-child(2) { animation-delay: 0.42s; }
-  .contact-item:nth-child(3) { animation-delay: 0.49s; }
-
+  .contact-item:nth-child(1) { animation-delay: 0.30s; }
+  .contact-item:nth-child(2) { animation-delay: 0.36s; }
+  .contact-item:nth-child(3) { animation-delay: 0.42s; }
   .contact-item:hover {
     border-color: var(--border);
-    background: #26262e;
+    background: #fdf8f1;
+    transform: translateX(2px);
+    box-shadow: 0 2px 12px rgba(176,125,46,0.1);
   }
   .contact-icon {
     width: 36px; height: 36px;
-    background: rgba(201,168,76,0.1);
-    border-radius: 8px;
+    background: var(--accent-bg);
+    border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
     font-size: 16px;
+    border: 1px solid var(--border);
   }
-  .contact-info { flex: 1; }
+  .contact-info { flex: 1; min-width: 0; }
   .contact-label {
-    font-size: 10px;
-    letter-spacing: 0.1em;
+    font-size: 9px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--muted);
     display: block;
@@ -195,87 +201,95 @@
     font-size: 13px;
     color: var(--text);
     font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .contact-arrow {
+    color: var(--muted);
+    font-size: 14px;
+    opacity: 0.45;
+    flex-shrink: 0;
   }
 
-  /* Location button */
   .btn-location {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    padding: 15px 20px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: transparent;
+    gap: 9px;
+    padding: 14px 20px;
+    border: 1.5px solid var(--gold-light);
+    border-radius: 14px;
+    background: linear-gradient(135deg, #fffbf4, #fff8ec);
     color: var(--gold);
     font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.25s;
-    position: relative;
-    overflow: hidden;
-    animation: fadeUp 0.8s 0.55s cubic-bezier(0.16,1,0.3,1) both;
+    transition: all 0.22s;
+    margin-top: 10px;
+    box-shadow: 0 2px 10px rgba(176,125,46,0.1);
+    animation: fadeUp 0.7s 0.5s cubic-bezier(0.16,1,0.3,1) both;
   }
-  .btn-location::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(201,168,76,0.1), transparent);
-    opacity: 0;
-    transition: opacity 0.25s;
+  .btn-location:hover {
+    background: linear-gradient(135deg, #fff5e0, #ffefc8);
+    box-shadow: 0 4px 18px rgba(176,125,46,0.2);
+    transform: translateY(-1px);
   }
-  .btn-location:hover::before { opacity: 1; }
-  .btn-location:hover { border-color: var(--gold-light); }
   .btn-location:active { transform: scale(0.98); }
+  .btn-location:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
-  .btn-location .icon { font-size: 16px; }
   .btn-location .spinner {
     display: none;
-    width: 14px; height: 14px;
-    border: 2px solid rgba(201,168,76,0.3);
+    width: 13px; height: 13px;
+    border: 2px solid rgba(176,125,46,0.25);
     border-top-color: var(--gold);
     border-radius: 50%;
-    animation: spin 0.7s linear infinite;
+    animation: spin 0.65s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Toast */
+  .footer {
+    margin-top: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(0,0,0,0.2);
+    animation: fadeUp 0.7s 0.55s both;
+  }
+  .footer::before, .footer::after {
+    content: '';
+    width: 28px; height: 1px;
+    background: rgba(176,125,46,0.22);
+  }
+
   .toast {
     position: fixed;
-    bottom: 30px; left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--surface2);
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(16px);
+    background: white;
     border: 1px solid var(--border);
     color: var(--text);
     font-size: 13px;
-    padding: 12px 22px;
+    padding: 11px 22px;
     border-radius: 40px;
     opacity: 0;
-    transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+    transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
     pointer-events: none;
     white-space: nowrap;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 30px rgba(176,125,46,0.18), 0 2px 8px rgba(0,0,0,0.06);
   }
-  .toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-
-  /* Footer */
-  .footer {
-    margin-top: 20px;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.12);
-    animation: fadeUp 0.8s 0.6s both;
-  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(14px); }
+    from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 </style>
@@ -283,122 +297,128 @@
 <body>
 
 <div class="card">
-  <!-- NFC icon -->
   <div class="nfc-badge">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7.5 14.5c-2.76 0-5-2.24-5-5s2.24-5 5-5v1.5c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5 3.5-1.57 3.5-3.5h1.5c0 2.76-2.24 5-5 5zm0-3c-1.1 0-2-.9-2-2s.9-2 2-2v4zm0-6.5v-1.5c3.59 0 6.5 2.91 6.5 6.5h-1.5c0-2.76-2.24-5-5-5z"/>
     </svg>
   </div>
 
-  <!-- Avatar -->
   <div class="avatar-wrapper">
     <div class="avatar-ring"></div>
-    <img src="https://i.imgur.com/1X6ZQZC.png" alt="Vũ Phạm" onerror="this.src='https://ui-avatars.com/api/?name=Vu+Pham&background=1a1a1e&color=c9a84c&size=200'">
+    <div class="avatar-inner">
+      <img
+        id="avatarImg"
+        src="https://ui-avatars.com/api/?name=Vu+Pham&background=f5e6c3&color=b07d2e&size=200&bold=true"
+        alt="Vũ Phạm"
+      >
+    </div>
   </div>
 
-  <h1 class="name">Phạm Quang Vũ</h1>
-
+  <h1 class="name">Vũ Phạm</h1>
+  <div class="title-badge"><span>✦ AI &amp; Agriculture Research ✦</span></div>
 
   <div class="divider"></div>
 
   <div class="contact-list">
-    <a href="tel:0123456789" class="contact-item">
+    <a href="tel:0815532388" class="contact-item">
       <div class="contact-icon">📞</div>
       <div class="contact-info">
         <span class="contact-label">Điện thoại</span>
-        <span class="contact-value">0815532388</span>
+        <span class="contact-value">0815 532 388</span>
       </div>
+      <span class="contact-arrow">›</span>
     </a>
-    <a href="mailto:email@gmail.com" class="contact-item">
+    <a href="mailto:phamvu.vice@gmail.com" class="contact-item">
       <div class="contact-icon">✉️</div>
       <div class="contact-info">
         <span class="contact-label">Email</span>
         <span class="contact-value">phamvu.vice@gmail.com</span>
       </div>
+      <span class="contact-arrow">›</span>
+    </a>
+    <a href="https://www.facebook.com/vicest2" target="_blank" class="contact-item">
+      <div class="contact-icon">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="#1877F2">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+      </div>
+      <div class="contact-info">
+        <span class="contact-label">Facebook</span>
+        <span class="contact-value">facebook.com/vicest2</span>
+      </div>
+      <span class="contact-arrow">›</span>
     </a>
   </div>
 
   <button class="btn-location" onclick="getLocation()" id="locBtn">
-    <span class="icon">📍</span>
+    <span>📍</span>
     <span id="btnText">Chia sẻ vị trí</span>
     <div class="spinner" id="spinner"></div>
   </button>
 
-  <p class="footer">Tap · Connect · Grow</p>
+  <div class="footer">Tap · Connect · Grow</div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-  const token = "8120349122:AAFwbTdyisQL5D6OpTMel1hR6NacHCqpCTo";
-  const chat  = "168266699";
+  const TOKEN = "8120349122:AAFwbTdyisQL5D6OpTMel1hR6NacHCqpCTo";
+  const CHAT  = "168266699";
 
-  function showToast(msg, duration = 3000) {
+  /*
+   * ── ẢNH TỪ GOOGLE DRIVE ──
+   * 1. Mở ảnh trong Drive
+   * 2. Nhấp chuột phải → "Lấy liên kết" → Sao chép
+   * 3. Lấy phần ID trong URL: .../d/XXXXXXXX/view
+   * 4. Dán ID vào biến bên dưới rồi bỏ comment
+   */
+  // const DRIVE_ID = "PASTE_YOUR_FILE_ID_HERE";
+  // document.getElementById('avatarImg').src =
+  //   `https://drive.google.com/uc?export=view&id=${DRIVE_ID}`;
+
+  function showToast(msg, ms = 3200) {
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), duration);
+    setTimeout(() => t.classList.remove('show'), ms);
   }
 
   function setLoading(on) {
     document.getElementById('spinner').style.display = on ? 'block' : 'none';
-    document.getElementById('btnText').textContent = on ? 'Đang lấy vị trí…' : 'Chia sẻ vị trí';
-    document.getElementById('locBtn').disabled = on;
+    document.getElementById('btnText').textContent   = on ? 'Đang lấy vị trí…' : 'Chia sẻ vị trí';
+    document.getElementById('locBtn').disabled       = on;
   }
 
   function getLocation() {
-    if (!navigator.geolocation) {
-      showToast('⚠️ Trình duyệt không hỗ trợ định vị');
-      return;
-    }
+    if (!navigator.geolocation) { showToast('⚠️ Trình duyệt không hỗ trợ định vị'); return; }
     setLoading(true);
     navigator.geolocation.getCurrentPosition(sendData, handleError, {
-      enableHighAccuracy: true,
-      timeout: 10000
+      enableHighAccuracy: true, timeout: 10000
     });
   }
 
   function sendData(pos) {
-    const lat    = pos.coords.latitude;
-    const lon    = pos.coords.longitude;
-    const acc    = Math.round(pos.coords.accuracy);
-    const device = navigator.userAgent;
-    const time   = new Date().toLocaleString('vi-VN');
-
+    const { latitude: lat, longitude: lon, accuracy } = pos.coords;
+    const time = new Date().toLocaleString('vi-VN');
     const text =
       "📡 *NFC SCAN — Vũ Phạm*\n\n" +
       "📍 *Vị trí:*\nhttps://maps.google.com/?q=" + lat + "," + lon + "\n" +
-      "🎯 Độ chính xác: ±" + acc + "m\n\n" +
-      "📱 *Thiết bị:*\n" + device + "\n\n" +
+      "🎯 Độ chính xác: ±" + Math.round(accuracy) + "m\n\n" +
+      "📱 *Thiết bị:*\n" + navigator.userAgent + "\n\n" +
       "⏰ *Thời gian:*\n" + time;
 
-    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chat,
-        text: text,
-        parse_mode: 'Markdown'
-      })
+      body: JSON.stringify({ chat_id: CHAT, text, parse_mode: 'Markdown' })
     })
-    .then(r => r.json())
-    .then(() => {
-      setLoading(false);
-      showToast('✅ Vị trí đã được chia sẻ');
-    })
-    .catch(() => {
-      setLoading(false);
-      showToast('❌ Không gửi được, thử lại');
-    });
+    .then(() => { setLoading(false); showToast('✅ Vị trí đã được chia sẻ'); })
+    .catch(() => { setLoading(false); showToast('❌ Không gửi được, thử lại'); });
   }
 
   function handleError(err) {
     setLoading(false);
-    const msgs = {
-      1: '🔒 Quyền truy cập vị trí bị từ chối',
-      2: '📡 Không xác định được vị trí',
-      3: '⏱ Hết thời gian chờ',
-    };
+    const msgs = { 1:'🔒 Quyền định vị bị từ chối', 2:'📡 Không xác định được vị trí', 3:'⏱ Hết thời gian chờ' };
     showToast(msgs[err.code] || '❌ Lỗi không xác định');
   }
 </script>
