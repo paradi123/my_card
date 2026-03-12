@@ -1,109 +1,406 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Vu Pham NFC Card</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vũ Phạm — AI & Agriculture</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-body{
-font-family:Arial;
-background:linear-gradient(135deg,#667eea,#764ba2);
-height:100vh;
-display:flex;
-align-items:center;
-justify-content:center;
-margin:0;
-}
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --dark: #0e0e10;
+    --surface: #18181c;
+    --surface2: #222228;
+    --border: rgba(201,168,76,0.18);
+    --text: #f0ece4;
+    --muted: #888;
+  }
 
-.card{
-background:white;
-padding:35px;
-border-radius:20px;
-width:320px;
-text-align:center;
-box-shadow:0 15px 35px rgba(0,0,0,0.2);
-}
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
 
-img{
-width:120px;
-border-radius:50%;
-margin-bottom:10px;
-}
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
 
-h2{
-margin:5px;
-}
+  /* Noise texture overlay */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.4;
+  }
 
-p{
-color:gray;
-}
+  .card {
+    position: relative;
+    width: 360px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 40px 36px 36px;
+    text-align: center;
+    box-shadow:
+      0 0 0 1px rgba(201,168,76,0.06),
+      0 30px 80px rgba(0,0,0,0.6),
+      0 0 60px rgba(201,168,76,0.04);
+    animation: cardIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
 
-.btn{
-background:#667eea;
-border:none;
-padding:12px 20px;
-border-radius:10px;
-color:white;
-font-size:16px;
-cursor:pointer;
-margin-top:10px;
-}
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(32px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
 
-.btn:hover{
-background:#5a67d8;
-}
+  /* Top decorative line */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 80px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    border-radius: 0 0 2px 2px;
+  }
 
+  /* NFC icon top right */
+  .nfc-badge {
+    position: absolute;
+    top: 18px; right: 22px;
+    opacity: 0.35;
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+  }
+  .nfc-badge svg { width: 22px; height: 22px; fill: var(--gold); }
+
+  /* Avatar */
+  .avatar-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+    animation: fadeUp 0.8s 0.15s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .avatar-ring {
+    position: absolute; inset: -5px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    background: linear-gradient(135deg, var(--gold), transparent, var(--gold-light)) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+  }
+  .avatar-wrapper img {
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(10%);
+  }
+
+  /* Name & title */
+  .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 6px;
+    animation: fadeUp 0.8s 0.2s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .title {
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 28px;
+    animation: fadeUp 0.8s 0.25s cubic-bezier(0.16,1,0.3,1) both;
+  }
+
+  /* Divider */
+  .divider {
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin-bottom: 24px;
+    animation: fadeUp 0.8s 0.3s both;
+  }
+
+  /* Contact rows */
+  .contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+    text-align: left;
+  }
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+    animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .contact-item:nth-child(1) { animation-delay: 0.35s; }
+  .contact-item:nth-child(2) { animation-delay: 0.42s; }
+  .contact-item:nth-child(3) { animation-delay: 0.49s; }
+
+  .contact-item:hover {
+    border-color: var(--border);
+    background: #26262e;
+  }
+  .contact-icon {
+    width: 36px; height: 36px;
+    background: rgba(201,168,76,0.1);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+  }
+  .contact-info { flex: 1; }
+  .contact-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 1px;
+  }
+  .contact-value {
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  /* Location button */
+  .btn-location {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: transparent;
+    color: var(--gold);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.8s 0.55s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .btn-location::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .btn-location:hover::before { opacity: 1; }
+  .btn-location:hover { border-color: var(--gold-light); }
+  .btn-location:active { transform: scale(0.98); }
+
+  .btn-location .icon { font-size: 16px; }
+  .btn-location .spinner {
+    display: none;
+    width: 14px; height: 14px;
+    border: 2px solid rgba(201,168,76,0.3);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 13px;
+    padding: 12px 22px;
+    border-radius: 40px;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 20px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.12);
+    animation: fadeUp 0.8s 0.6s both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 </style>
-
 </head>
-
 <body>
 
 <div class="card">
+  <!-- NFC icon -->
+  <div class="nfc-badge">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7.5 14.5c-2.76 0-5-2.24-5-5s2.24-5 5-5v1.5c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5 3.5-1.57 3.5-3.5h1.5c0 2.76-2.24 5-5 5zm0-3c-1.1 0-2-.9-2-2s.9-2 2-2v4zm0-6.5v-1.5c3.59 0 6.5 2.91 6.5 6.5h-1.5c0-2.76-2.24-5-5-5z"/>
+    </svg>
+  </div>
 
-<img src="https://i.imgur.com/1X6ZQZC.png">
+  <!-- Avatar -->
+  <div class="avatar-wrapper">
+    <div class="avatar-ring"></div>
+    <img src="https://i.imgur.com/1X6ZQZC.png" alt="Vũ Phạm" onerror="this.src='https://ui-avatars.com/api/?name=Vu+Pham&background=1a1a1e&color=c9a84c&size=200'">
+  </div>
 
-<h2>Vũ Phạm</h2>
-<p>AI & Agriculture Research</p>
+  <h1 class="name">Phạm Quang Vũ</h1>
 
-<p>📞 0123456789</p>
-<p>📧 email@gmail.com</p>
 
-<button class="btn" onclick="getLocation()">Share Location</button>
+  <div class="divider"></div>
 
+  <div class="contact-list">
+    <a href="tel:0123456789" class="contact-item">
+      <div class="contact-icon">📞</div>
+      <div class="contact-info">
+        <span class="contact-label">Điện thoại</span>
+        <span class="contact-value">0815532388</span>
+      </div>
+    </a>
+    <a href="mailto:email@gmail.com" class="contact-item">
+      <div class="contact-icon">✉️</div>
+      <div class="contact-info">
+        <span class="contact-label">Email</span>
+        <span class="contact-value">phamvu.vice@gmail.com</span>
+      </div>
+    </a>
+  </div>
+
+  <button class="btn-location" onclick="getLocation()" id="locBtn">
+    <span class="icon">📍</span>
+    <span id="btnText">Chia sẻ vị trí</span>
+    <div class="spinner" id="spinner"></div>
+  </button>
+
+  <p class="footer">Tap · Connect · Grow</p>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
+  const token = "8120349122:AAFwbTdyisQL5D6OpTMel1hR6NacHCqpCTo";
+  const chat  = "168266699";
 
-let token="8120349122:AAFwbTdyisQL5D6OpTMel1hR6NacHCqpCTo"
-let chat="168266699"
+  function showToast(msg, duration = 3000) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duration);
+  }
 
-function getLocation(){
+  function setLoading(on) {
+    document.getElementById('spinner').style.display = on ? 'block' : 'none';
+    document.getElementById('btnText').textContent = on ? 'Đang lấy vị trí…' : 'Chia sẻ vị trí';
+    document.getElementById('locBtn').disabled = on;
+  }
 
-navigator.geolocation.getCurrentPosition(sendData)
+  function getLocation() {
+    if (!navigator.geolocation) {
+      showToast('⚠️ Trình duyệt không hỗ trợ định vị');
+      return;
+    }
+    setLoading(true);
+    navigator.geolocation.getCurrentPosition(sendData, handleError, {
+      enableHighAccuracy: true,
+      timeout: 10000
+    });
+  }
 
-}
+  function sendData(pos) {
+    const lat    = pos.coords.latitude;
+    const lon    = pos.coords.longitude;
+    const acc    = Math.round(pos.coords.accuracy);
+    const device = navigator.userAgent;
+    const time   = new Date().toLocaleString('vi-VN');
 
-function sendData(position){
+    const text =
+      "📡 *NFC SCAN — Vũ Phạm*\n\n" +
+      "📍 *Vị trí:*\nhttps://maps.google.com/?q=" + lat + "," + lon + "\n" +
+      "🎯 Độ chính xác: ±" + acc + "m\n\n" +
+      "📱 *Thiết bị:*\n" + device + "\n\n" +
+      "⏰ *Thời gian:*\n" + time;
 
-let lat = position.coords.latitude
-let lon = position.coords.longitude
+    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chat,
+        text: text,
+        parse_mode: 'Markdown'
+      })
+    })
+    .then(r => r.json())
+    .then(() => {
+      setLoading(false);
+      showToast('✅ Vị trí đã được chia sẻ');
+    })
+    .catch(() => {
+      setLoading(false);
+      showToast('❌ Không gửi được, thử lại');
+    });
+  }
 
-let device = navigator.userAgent
-let time = new Date().toLocaleString()
-
-let text =
-"📡 NFC SCAN\n\n"+
-"📍 Location:\nhttps://maps.google.com/?q="+lat+","+lon+"\n\n"+
-"📱 Device:\n"+device+"\n\n"+
-"⏰ Time:\n"+time
-
-fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat}&text=${encodeURIComponent(text)}`)
-
-}
-
+  function handleError(err) {
+    setLoading(false);
+    const msgs = {
+      1: '🔒 Quyền truy cập vị trí bị từ chối',
+      2: '📡 Không xác định được vị trí',
+      3: '⏱ Hết thời gian chờ',
+    };
+    showToast(msgs[err.code] || '❌ Lỗi không xác định');
+  }
 </script>
-
 </body>
 </html>
